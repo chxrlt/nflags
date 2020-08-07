@@ -1,0 +1,58 @@
+#!/bin/python
+
+import re
+import argparse
+
+flags = {
+    # Mapping of the flag to a list of colors, where each color in
+    # the list is for each row of the flag
+
+    # Colors are taken from: https://misc.flogisoft.com/bash/tip_colors_and_formatting
+
+    r'gay|homosexual': [196, 208, 226, 28, 20, 90],
+    r'bi|bisexual': [198, 198, 97, 25, 25],
+    'lesbian': [202, 209, 15, 15, 168, 161],
+    r'pan|pansexual': [198, 198, 220, 220, 39, 39],
+    'polysexual': [198, 198, 41, 41, 39, 39],
+    'omnisexual': [218, 169, 54, 69, 111],
+    r'trans|transgender': [81, 211, 15, 211, 81],
+    'demiboy': [244, 249, 117, 15, 117, 249, 244],
+    'demigirl': [244, 249, 218, 15, 218, 249, 244],
+    r'nb|nonbinary': [226, 226, 15, 15, 98, 98, 237, 237],
+    r'fluid|genderfluid': [211, 15, 128, 0, 63],
+    r'aro|aromantic': [71, 149, 15, 249, 0],
+    'agender': [0, 251, 15, 149, 15, 251, 0],
+    r'ace|asexual': [0, 0, 242, 242, 15, 15, 54, 54],
+    r'grayace|graysexual': [54, 242, 15, 242, 54],
+}
+
+def color256(col):
+    return f'\033[48;5;{col}m'
+
+def draw_flag(flag, width):
+    box = ' '
+    match = ''
+
+    # Loop through all the flags, until a match is found
+    for f in flags:
+        if re.match(f, flag):
+            match = flags[f]
+
+    # Print each row of the flag
+    for row in match:
+        print(f'{color256(row)}{box * width}\033[49m')
+    print()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--flag', help='Displays the chosen FLAG')
+    parser.add_argument('-l', '--list', action='store_true', default=False,
+                                        help='Lists all the available flags')
+
+    args = parser.parse_args()
+
+    if args.list:
+        # List flags
+        print(f'Available flags: \n{", ".join([flag.split("|")[0] for flag in flags])}')
+    elif args.flag:
+        draw_flag(args.flag, 20)
